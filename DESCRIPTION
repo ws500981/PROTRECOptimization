@@ -1,0 +1,52 @@
+Type: Package
+Package: PROTREC_Optimization
+Title: Optimization of PROTREC and Validation of PROTREC on Additional
+    Datasets.
+Version: 1.0.0
+Date: 2023-02-24
+Authors@R: c(
+    person("Wenshan", "Wu", , "wwu009@e.ntu.edu.sg", role = c("aut", "cre")),
+    person("Zelu", "Huang", , "hu0002lu@e.ntu.edu.sg", role = "aut"),
+    person("Weijia", "Kong", , "weijia002@e.ntu.edu.sg", role = "aut"),
+    person("Wilson", "Goh", , "wilsongoh@ntu.edu.sg", role = "aut")
+  )
+Maintainer: Wenshan Wu <wwu009@e.ntu.edu.sg>
+Description: Optimization of the PROTREC algorithm which predicts and
+    validates missing proteins based on protein complexes or networks. The
+    package includes hyper-parameter tuning (PROTREC score threshold,
+    minimum complex size and PROTREC score selection operation) applied in
+    different validation scenarios; PROTREC validation using selected
+    significant complexes selected from popular protein recovery function,
+    such as Functional Class Scoring (FCS); and further validation of
+    PROTREC using new liver tissue datasets.
+License: GPL-3
+Depends: 
+    R (>= 4.0.0)
+Imports: 
+    car,
+    cli,
+    dplyr,
+    glue,
+    lifecycle,
+    readxl,
+    rlang,
+    viper,
+    withr
+Suggests: 
+    gdata,
+    ggplot2,
+    grid,
+    gridExtra,
+    knitr,
+    pheatmap,
+    RColorBrewer,
+    readr,
+    rJava,
+    vioplot,
+    xlsx
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
