@@ -1,5 +1,5 @@
 Type: Package
-Package: PROTREC_Optimization
+Package: PROTRECOptimization
 Title: Optimization of PROTREC and Validation of PROTREC on Additional
     Datasets.
 Version: 1.0.0
