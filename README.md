@@ -206,19 +206,24 @@ The output will contain a vector of five pieces of information: the observed pro
 ## Hyperparameter tuning of the PROTREC method using different validation strategies
 ###  Validation based on peptide lists
 For example:
+
       get_result_sce_a_rc <- function(rc_nprotrec,rc_cprotrec,protrecscoreset,mode)
 ### Validation based on the top N proteins predicted by another network-based recovery methods
 For example:
+
       rc_ngsea_p <- repgsea(RC_N, complex_vector)
       get_result_sce_b_rcc<-function(mode,complex_size, rc_cfcs, rc_cprotrec, rc_chg)
 ### Validation based on assembled protein lists
 For example:
+
       get_result_sce_c_hela <- function(hela_ddaprotrec,protrecscoreset,mode,complex_size)
 ### Validation of dda predicted proteins based on dia protein lists
 For example:
+
       get_result_sce_d_siha<-function(siha_ddaprotrec, protrecscoreset, mode, complex_size)
 ### Validation based on the CCLE dataset
 For example:
+
       get_result_sce_e_rcc <- function(rc_cprotrec,protrecscoreset,mode)
 
 
