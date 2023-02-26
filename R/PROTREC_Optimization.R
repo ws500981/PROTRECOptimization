@@ -387,7 +387,7 @@ pairwise_recovery <- function(predict_list, original_prot_list, check_prot_list,
 #' the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins,
 #' and the list of validated proteins separated by 'a'.
 #' @export
-ntop_recovery_protrec <- function(prot_predict_list, original_prot_list, check_prot_list, complex_vec)
+ntop_recovery_protrec <- function(prot_predict_list, original_prot_list, check_prot_list, complex_vec, aaa)
 {
 
   prot_predict_list <- prot_predict_list[1:aaa,] # take up to aaa number of proteins in the predicted list
