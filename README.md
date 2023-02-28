@@ -5,7 +5,7 @@ PROTREC Optimization
 `PROTRECOptimization` is an R package containing functions for PROTREC optimization.
 
 `PROTRECOptimization` methods are currently divisible into four groups
--  Protein Recovery (PROTREC) and other network-based methods: Functional Class Scoring (FCS), Hypergeometic Enrichment (HE), Gene Set Enrichment Analysis (GSEA)PROTREC, and evaluation metrics
+-  Protein Recovery (PROTREC) and other network-based methods: Functional Class Scoring (FCS), Hypergeometic Enrichment (HE), Gene Set Enrichment Analysis (GSEA), and their evaluation metrics
 -  Hyperparameter tuning of the PROTREC method
 -  FCS-filtering of complexes to optimize PROTREC
 -  The application of PROTREC on new liver tissue datasets
@@ -58,6 +58,10 @@ This is akin to a list of unique and ambiguous PSMs that can be used for checkin
     RC_ccle <- data(RC_ccle)
     Liver_ccle <- data(Liver_ccle)
     
+Two example lists of complexes which have p-values < 0.05 based on significant enrichment of observed proteins against a vector of complexes using the FCS method is also available. The lists of FCS-significant complexes can be processed as follows:
+    
+    FCS_sig_complex_n <- data(FCS_sig_complex_n)
+    FCS_sig_complex_c <- data(FCS_sig_complex_c)
 
 ## Protein Reovery Methods
 
@@ -86,7 +90,7 @@ For example,
 
       PROTREC_prot_rc_n_1 <- data.frame(PROTREC_protprob(complex_vector, 1-rc_nprotrec[1,], rownames(RC_N), 0.01))
 
-### FCS
+### Functional Class Scoring (FCS)
 
 #### FCS complex probability
 
@@ -110,7 +114,7 @@ Where cplx is the complex vector and p is a vector of complex-based probabilitie
 
       fcs_prot_rc_n_1 <- data.frame(fcs_prot_prob_assign(complex_vector, 1 - rcnfcs[1,]))
 
-### HE
+### Hypergeometic Enrichment (HE)
 
 #### HE complex probability
 
@@ -132,7 +136,7 @@ Where cplx is the complex vector and p is a vector of complex-based probabilitie
 
       rc_nhg <- data.frame(hgtest_prot_prob_assign(complex_vector, 1 - rc_nhg[1,]))
 
-### GSEA
+### Gene Set Enrichment Analysis (GSEA)
 
 #### GSEA complex probability
 
@@ -155,7 +159,6 @@ Where cplx is the complex vector and p is a vector of complex-based probabilitie
       rc_ngsea<- data.frame(gsea_prot_prob_assign(complex_vector, 1 - rc_ngsea_p[1,]))
 
 ## Performance Metrics
-
 ### Recovery rate for FCS, HE and GSEA
 Evaluates the significance of the proportion of verified proteins given a set of predicted proteins.
 
@@ -205,35 +208,91 @@ The output will contain a vector of five pieces of information: the observed pro
 
 ## Hyperparameter tuning of the PROTREC method using different validation strategies
 ###  Validation based on peptide lists
-For example:
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against peptide lists.
 
       get_result_sce_a_rc <- function(rc_nprotrec,rc_cprotrec,protrecscoreset,mode)
+
+Where rc_nprotrec is the PROTREC-based probability for complexes derived based on a complex vector and a set of observed proteins using the RC_N dataset, and rc_cprotrec is the PROTREC-based probability for complexes derived based on a complex vector and a set of observed proteins using the RC_C dataset, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, and mode is the PROTREC score selection operation, default is 'max'. For example:
+
+      get_result_sce_a_rc <- function(rc_nprotrec,rc_cprotrec,0.95,'max')
+      
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
+
 ### Validation based on the top N proteins predicted by another network-based recovery methods
-For example:
+Evaluates the performance of PROTREC for the given hyperparameters for all samples for the top N proteins (N being the number of predicted proteins using another network-based method such as FCS, HE or GSEA) using the validation against peptide lists.
+
+      get_result_sce_b_rcn<-function(mode, complex_size, rc_nfcs, rc_nprotrec, rc_nhg)
+
+Where mode is the PROTREC score selection operation, default is 'max', complex_size is the minimal complex size to consider (default is usually size 5), rc_nfcs is a matrix of p-values based on significant enrichment of observed proteins against a vector of complexes using FCS on the RC_N dataset, rc_nhg is a matrix of probabilities assigned to individual proteins based on the HE probability, RC_N is a data matrix and complex_vector is a vector of complex features, and rc_ngsea_p a matrix of p-values based on significant enrichment of observed proteins against a vector of complexes. For example:
 
       rc_ngsea_p <- repgsea(RC_N, complex_vector)
-      get_result_sce_b_rcc<-function(mode,complex_size, rc_cfcs, rc_cprotrec, rc_chg)
+      get_result_sce_b_rcc<-function('max', 5, rc_cfcs, rc_cprotrec, rc_chg)
+      
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
+      
 ### Validation based on assembled protein lists
-For example:
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against assembled protein lists.
 
-      get_result_sce_c_hela <- function(hela_ddaprotrec,protrecscoreset,mode,complex_size)
+      get_result_sce_c_hela <- function(hela_ddaprotrec, protrecscoreset, mode, complex_size)
+
+Where hela_ddaprotrec is the Hela dda protein list, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, mode is the PROTREC score selection operation, default is 'max', and complex_size is the minimal complex size to consider (default is usually size 5). For example:
+
+      get_result_sce_c_hela <- function(hela_ddaprotrec, 0.95, 'max', 5)
+
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
+
 ### Validation of dda predicted proteins based on dia protein lists
-For example:
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against dia protein lists.
 
       get_result_sce_d_siha<-function(siha_ddaprotrec, protrecscoreset, mode, complex_size)
+
+Where siha_ddaprotrec is the Siha dda protein list, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, mode is the PROTREC score selection operation, default is 'max', and complex_size is the minimal complex size to consider (default is usually size 5). For example:
+
+      get_result_sce_d_siha<-function(siha_ddaprotrec, 0.95, 'max', 5)
+
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
+      
 ### Validation based on the CCLE dataset
-For example:
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against the CCLE dataset.
 
-      get_result_sce_e_rcc <- function(rc_cprotrec,protrecscoreset,mode)
+      get_result_sce_e_rcc <- function(rc_cprotrec, protrecscoreset, mode)
 
+Where rc_cprotrec is the PROTREC-based probability for complexes derived based on a complex vector and a set of observed proteins using the RC_C dataset, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, mode is the PROTREC score selection operation, default is 'max'. For example:
+
+      get_result_sce_e_rcc <- function(rc_cprotrec, 0.95, 'max')
+
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
 
 ## FCS-filtering of complexes to optimize PROTREC
-### 
-For example:
+Uses FCS-filtered complexes for PROTREC score calculation and evaluates the performance of PROTREC using the validation against the peptide lists.
+
       get_average_values_n <- function(FCS_sig_complex_n)
+
+Where FCS_sig_complex_n is the list of FCS-filtered significant complexes based on the RC_N dataset. For example:
+
+      get_average_values_n <- function(FCS_sig_complex_n)
+
+The function generates a bar plot showing the PROTREC score distribution comparison between FCS-filtered prediction and non-FCS-filtered prediction and a line plot showing the protein counts comparisons between FCS-filtered prediction and non-FCS-filtered prediction.
 
 ## The application of PROTREC on new liver tissue datasets
 ### The LC dataset
-      get_result_sce_e_lc <- function(lc_tprotrec,protrecscoreset,mode)
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against the CCLE dataset.
+
+      get_result_sce_e_lc <- function(lc_tprotrec, protrecscoreset, mode)
+
+Where lc_tprotrec is the PROTREC-based probability for complexes derived based on a complex vector and a set of observed proteins using the LC dataset, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, mode is the PROTREC score selection operation, default is 'max'. For example:
+
+      get_result_sce_e_lc <- function(lc_tprotrec, 0.95, 'max')
+
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
+
 ### The HCC dataset
-      get_result_sce_e_hcc <- function(hcc_protrec,protrecscoreset,mode)
+Evaluates the performance of PROTREC for the given hyperparameters for all samples using the validation against the CCLE dataset.
+
+      get_result_sce_e_hcc <- function(hcc_protrec, protrecscoreset, mode)
+
+Where hcc_tprotrec is the PROTREC-based probability for complexes derived based on a complex vector and a set of observed proteins using the HcC dataset, protrecscoreset is the PROTREC score significance cutoff, default is 0.95, mode is the PROTREC score selection operation, default is 'max'. For example:
+
+      get_result_sce_e_hcc <- function(hcc_protrec, 0.95, 'max')
+
+The output will contain a vector of four pieces of information for each sample: the observed proporetion of overlap, the significance of this overlap (p-value), the number of verified proteins, the total number of predicted missing proteins.
